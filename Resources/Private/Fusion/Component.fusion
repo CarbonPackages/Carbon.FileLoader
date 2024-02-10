@@ -1,0 +1,68 @@
+prototype(Carbon.FileLoader:Component) < prototype(Neos.Fusion:Component) {
+    /// 'tags' | 'attributes' Which strategy to use for loading the files
+    strategy = ${Configuration.setting('Carbon.FileLoader.strategy')}
+
+    /// bool Inline script/style or not. If true, the strategy is forced to 'tags'
+    inline = false
+
+    /// string The Package to load the file from
+    package = null
+
+    // string | string[] (comma separated string) or array of file paths / filenames to load
+    js = false
+    css = false
+    mjs = false
+
+    /// bool Entry points to turn off the automatic inclusion of files
+    neverIncludeJS = false
+    neverIncludeCSS = false
+    neverIncludeMJS = false
+
+    /// string Folders to load the files from
+    jsFolder = 'Scripts/'
+    mjsFolder = 'Modules/'
+    cssFolder = 'Styles/'
+
+    /// bool Load the scripts with defer attribute (only fot tags strategy)
+    deferScripts = true
+
+    /// bool Load the scripts with async attribute (only fot tags strategy)
+    asyncScripts = false
+
+    /// bool Whether to use the cache or not (only fot attributes strategy)
+    useCache = true
+
+    /// bool Output some debug information in the console (only fot attributes strategy)
+    debug = false
+
+    /// array of bool|string Target for slipstream (only for tags strategy and if Sitegeist.Slipstream is installed)
+    slipstream = Neos.Fusion:DataStructure {
+        js = true
+        css = true
+        mjs = true
+    }
+
+    /// array bool Whether to prepend the tag to the slipstream target (only for tags strategy and if Sitegeist.Slipstream is installed)
+    slipstreamPrepend = Neos.Fusion:DataStructure {
+        js = false
+        css = false
+        mjs = false
+    }
+
+    renderer = Neos.Fusion:Case {
+        tags {
+            @position = 'end'
+            condition = ${props.inline || props.strategy == 'tags'}
+            renderer = Carbon.FileLoader:Strategy.Tags {
+                @apply.props = ${props}
+            }
+        }
+        attributes {
+            @position = 'after tags'
+            condition = true
+            renderer = Carbon.FileLoader:Strategy.Attributes {
+                @apply.props = ${props}
+            }
+        }
+    }
+}

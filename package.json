@@ -1,0 +1,24 @@
+{
+  "name": "carbon.fileloader",
+  "description": "Dependencies for Carbon.FileLoader",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CarbonPackages/Carbon.FileLoader.git"
+  },
+  "devDependencies": {
+    "@prettier/plugin-php": "^0.22.2",
+    "esbuild": "^0.20.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "start": "pnpm build"
+  }
+}

@@ -1,0 +1,8 @@
+Carbon:
+  FileLoader:
+    # Strategy "tag" include the tag (script, style or link) into the markup. Strategy "attributes" just will just return a data structure with attributes to use together with the Loader.js
+    # You have to include the Loader.js in your page to make it work
+    # Possible values: tags, attributes
+    strategy: tags
+    # Set this to 0, false or null will disable the version hash
+    hashLength: 8

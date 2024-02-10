@@ -1,0 +1,14 @@
+prototype(Carbon.FileLoader:Helper.File) {
+    @class = 'Carbon\\FileLoader\\FusionObjects\\FileImplementation'
+
+    /// string The Package name
+    package = null
+
+    /// string Optional folder name (get's appendend to the Public folder)
+    folder = null
+
+    /// string The file name. If the file contains '//', it will be used as path and the package and folder are ignored
+    file = null
+
+    hashLength = ${Configuration.setting('Carbon.FileLoader.hashLength')}
+}

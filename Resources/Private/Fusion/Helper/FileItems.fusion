@@ -1,0 +1,33 @@
+prototype(Carbon.FileLoader:Helper.FileItems) < prototype(Neos.Fusion:Component) {
+    /// string The Package name
+    package = null
+
+    /// string | string[] The file name or an array of file names
+    items = null
+
+    /// string Optional folder name (get's appendend to the Public folder)
+    folder = null
+
+    /// string If set, the array will be converted to a string and split by this delimiter
+    glue = null
+
+    renderer = Neos.Fusion:Case {
+        @process.glue = ${props.glue ? Array.join(value, props.glue) : value}
+        // emptyArray {
+        //     condition = ${!props.package || !props.items}
+        //     renderer = ${[]}
+        // }
+        default {
+            condition = true
+            renderer = Neos.Fusion:Map {
+                @process.filter = ${Array.filter(value)}
+                items = ${Type.isArray(props.items) ? props.items : String.split(props.items, ',')}
+                itemRenderer = Carbon.FileLoader:Helper.File {
+                    package = ${props.package}
+                    folder = ${props.folder}
+                    file = ${item}
+                }
+            }
+        }
+    }
+}

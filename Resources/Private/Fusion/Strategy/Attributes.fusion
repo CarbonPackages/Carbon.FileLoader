@@ -1,0 +1,66 @@
+prototype(Carbon.FileLoader:Strategy.Attributes) < prototype(Neos.Fusion:Component) {
+    // Returns DataStructure (attributes) to load files from the packages
+
+    /// string The Package to load the file from
+    package = null
+
+    /// string | string[] (comma separated string) or array of file paths / filenames to load
+    js = false
+    css = false
+    mjs = false
+
+    /// bool Whether to use the cache or not
+    useCache = true
+
+    /// bool Output some debug information in the console
+    debug = false
+
+    /// bool Entry points to turn off the automatic inclusion of files
+    neverIncludeJS = false
+    neverIncludeCSS = false
+    neverIncludeMJS = false
+
+    /// string Folders to load the files from
+    jsFolder = 'Scripts/'
+    mjsFolder = 'Modules/'
+    cssFolder = 'Styles/'
+
+    @private {
+        js = Carbon.FileLoader:Helper.FileItems {
+            @if.set = ${!props.neverIncludeJS}
+            items = ${props.js}
+            package = ${props.package}
+            folder = ${props.jsFolder}
+            glue = ','
+        }
+        mjs = Carbon.FileLoader:Helper.FileItems {
+            @if.set = ${!props.neverIncludeMJS}
+            items = ${props.mjs}
+            package = ${props.package}
+            folder = ${props.mjsFolder}
+            glue = ','
+        }
+        css = Carbon.FileLoader:Helper.FileItems {
+            @if.set = ${!props.neverIncludeCSS}
+            items = ${props.css}
+            package = ${props.package}
+            folder = ${props.cssFolder}
+            glue = ','
+        }
+    }
+
+    renderer = Neos.Fusion:DataStructure {
+        @if.set = ${this['data-loader']}
+        data-loader = ${!!(private.js || private.css || private.mjs)}
+        data-no-cache = true
+        data-no-cache.@if.set = ${!props.useCache}
+        data-debug = true
+        data-debug.@if.set = ${props.debug}
+        data-js = ${private.js}
+        data-js.@if.set = ${private.js}
+        data-mjs = ${private.mjs}
+        data-mjs.@if.set = ${private.mjs}
+        data-css = ${private.css}
+        data-css.@if.set = ${private.css}
+    }
+}

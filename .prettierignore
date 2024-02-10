@@ -1,0 +1,4 @@
+composer.json
+composer.lock
+pnpm-lock.yaml
+Resources/Public/**/*
