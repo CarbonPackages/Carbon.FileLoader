@@ -28,42 +28,44 @@ prototype(Carbon.FileLoader:Strategy.Attributes) < prototype(Neos.Fusion:Compone
     mjsFolder = 'Modules/'
     cssFolder = 'Styles/'
 
-    @private {
-        js = Carbon.FileLoader:Helper.FileItems {
+    // Solve this with @private as soon the minimum version is Neos 8.3
+    renderer = Neos.Fusion:Component {
+        @apply.props = ${props}
+        _js = Carbon.FileLoader:Helper.FileItems {
             @if.set = ${!props.neverIncludeJS}
             items = ${props.js}
             package = ${props.package}
             folder = ${props.jsFolder}
             glue = ','
         }
-        mjs = Carbon.FileLoader:Helper.FileItems {
+        _mjs = Carbon.FileLoader:Helper.FileItems {
             @if.set = ${!props.neverIncludeMJS}
             items = ${props.mjs}
             package = ${props.package}
             folder = ${props.mjsFolder}
             glue = ','
         }
-        css = Carbon.FileLoader:Helper.FileItems {
+        _css = Carbon.FileLoader:Helper.FileItems {
             @if.set = ${!props.neverIncludeCSS}
             items = ${props.css}
             package = ${props.package}
             folder = ${props.cssFolder}
             glue = ','
         }
-    }
 
-    renderer = Neos.Fusion:DataStructure {
-        @if.set = ${this['data-loader']}
-        data-loader = ${!!(private.js || private.css || private.mjs) ? (props.scriptExecution ? props.scriptExecution : true) : null}
-        data-no-cache = true
-        data-no-cache.@if.set = ${!props.useCache}
-        data-debug = true
-        data-debug.@if.set = ${props.debug}
-        data-js = ${private.js}
-        data-js.@if.set = ${private.js}
-        data-mjs = ${private.mjs}
-        data-mjs.@if.set = ${private.mjs}
-        data-css = ${private.css}
-        data-css.@if.set = ${private.css}
+        renderer = Neos.Fusion:DataStructure {
+            @if.set = ${this['data-loader']}
+            data-loader = ${!!(props._js || props._css || props._mjs) ? (props.scriptExecution ? props.scriptExecution : true) : null}
+            data-no-cache = true
+            data-no-cache.@if.set = ${!props.useCache}
+            data-debug = true
+            data-debug.@if.set = ${props.debug}
+            data-js = ${props._js}
+            data-js.@if.set = ${props._js}
+            data-mjs = ${props._mjs}
+            data-mjs.@if.set = ${props._mjs}
+            data-css = ${props._css}
+            data-css.@if.set = ${props._css}
+        }
     }
 }

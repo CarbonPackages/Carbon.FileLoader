@@ -11,7 +11,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/fusion": "^8.3"
+        "neos/fusion": "^7.3 || ^8.0"
     },
     "autoload": {
         "psr-4": {
