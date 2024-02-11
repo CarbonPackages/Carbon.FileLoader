@@ -43,8 +43,8 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
     renderer = Neos.Fusion:Component {
         @apply.props = ${props}
         _slipstreamIsInstalled = ${!!Configuration.setting('Neos.Neos.fusion.autoInclude')['Sitegeist.Slipstream']}
-        _slipstream = ${props.slipstream && this.slipstreamIsInstalled ? props.slipstream : null}
-        _slipstreamPrepend = ${props.slipstreamPrepend && this.slipstreamIsInstalled ? props.slipstreamPrepend : null}
+        _slipstream = ${props.slipstream && this._slipstreamIsInstalled ? props.slipstream : []}
+        _slipstreamPrepend = ${props.slipstreamPrepend && this._slipstreamIsInstalled ? props.slipstreamPrepend : []}
 
         _css = Carbon.FileLoader:Helper.FileItems {
             @if.set = ${!props.neverIncludeCSS}
