@@ -20,6 +20,9 @@ prototype(Carbon.FileLoader:Strategy.Attributes) < prototype(Neos.Fusion:Compone
     neverIncludeCSS = false
     neverIncludeMJS = false
 
+     /// 'defer' | 'async' | null Load the scripts with defer attribute
+    scriptExecution = 'defer'
+
     /// string Folders to load the files from
     jsFolder = 'Scripts/'
     mjsFolder = 'Modules/'
@@ -51,7 +54,7 @@ prototype(Carbon.FileLoader:Strategy.Attributes) < prototype(Neos.Fusion:Compone
 
     renderer = Neos.Fusion:DataStructure {
         @if.set = ${this['data-loader']}
-        data-loader = ${!!(private.js || private.css || private.mjs)}
+        data-loader = ${!!(private.js || private.css || private.mjs) ? (props.scriptExecution ? props.scriptExecution : true) : null}
         data-no-cache = true
         data-no-cache.@if.set = ${!props.useCache}
         data-debug = true

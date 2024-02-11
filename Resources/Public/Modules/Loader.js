@@ -24,14 +24,18 @@ function initLoader({ callback = () => {
     const dataset = element.dataset;
     const useCache = !getBooleanData(dataset.noCache);
     const debug = getBooleanData(dataset.debug);
+    let scriptExecution = dataset.scriptExecution || false;
+    if (scriptExecution !== "async" && scriptExecution !== "defer") {
+      scriptExecution = false;
+    }
     if (dataset?.css) {
       styles = [...styles, ...LoaderMap(dataset.css, "css", useCache, debug)];
     }
     if (dataset?.mjs) {
-      scripts = [...scripts, ...LoaderMap(dataset.mjs, "mjs", useCache, debug)];
+      scripts = [...scripts, ...LoaderMap(dataset.mjs, "mjs", useCache, debug, scriptExecution)];
     }
     if (dataset?.js) {
-      scripts = [...scripts, ...LoaderMap(dataset.js, "js", useCache, debug)];
+      scripts = [...scripts, ...LoaderMap(dataset.js, "js", useCache, debug, scriptExecution)];
     }
   });
   styles = [...new Set(styles)];
@@ -47,10 +51,10 @@ function initLoader({ callback = () => {
 function Loader(items) {
   return items instanceof Array ? Promise.all(items.map(exec)) : exec(items);
 }
-function LoaderMap(items, type, useCache = true, debug = false) {
-  return items.split(",").map((url) => ({ url, type, useCache, debug }));
+function LoaderMap(items, type, useCache = true, debug = false, scriptExecution = false) {
+  return items.split(",").map((url) => ({ url, type, useCache, debug, scriptExecution }));
 }
-function exec({ url, type, useCache, debug }) {
+function exec({ url, type, useCache, debug, scriptExecution }) {
   if (!url) {
     throw new Error("LOADER: You must provide a url to load");
   }
@@ -70,7 +74,7 @@ function exec({ url, type, useCache, debug }) {
       return promise;
     }
   }
-  const element = type === "css" ? createStyle({ url }) : createScript({ url, type });
+  const element = type === "css" ? createStyle({ url }) : createScript({ url, type, scriptExecution });
   const pending = appendAndLoad(element);
   if (useCache) {
     cache[url] = pending;
@@ -112,7 +116,7 @@ function createStyle({ url }) {
   link.dataset.marker = "true";
   return link;
 }
-function createScript({ url, type }) {
+function createScript({ url, type, scriptExecution }) {
   if (!url) {
     return;
   }
@@ -120,7 +124,9 @@ function createScript({ url, type }) {
   if (type === "mjs") {
     script.type = "module";
   }
-  script.defer = true;
+  if (scriptExecution) {
+    script[scriptExecution] = true;
+  }
   script.dataset.marker = "true";
   script.src = url;
   return script;

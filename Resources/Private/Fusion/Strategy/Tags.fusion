@@ -22,11 +22,8 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
     mjsFolder = 'Modules/'
     cssFolder = 'Styles/'
 
-    /// bool Load the scripts with defer attribute
-    deferScripts = true
-
-    /// bool Load the scripts with async attribute
-    asyncScripts = false
+    /// 'defer' | 'async' | null Load the scripts with defer attribute
+    scriptExecution = 'defer'
 
     /// array of bool|string Target for slipstream (only if Sitegeist.Slipstream is installed)
     slipstream = Neos.Fusion:DataStructure {
@@ -90,8 +87,8 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                 tagName = 'script'
                 attributes = Neos.Fusion:Attributes {
                     src = ${props.inline ? null : item}
-                    defer = ${props.inline ? null : props.deferScripts}
-                    asyc = ${props.inline ? null : props.asycScripts}
+                    defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
+                    asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
                     data-slipstream = ${private.slipstream.js}
                     data-slipstream-prepend = ${private.slipstreamPrepend.js}
                 }
@@ -105,8 +102,8 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                 attributes = Neos.Fusion:Attributes {
                     src = ${props.inline ? null : item}
                     type = 'module'
-                    defer = ${props.inline ? null : props.deferScripts}
-                    asyc = ${props.inline ? null : props.asycScripts}
+                    defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
+                    asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
                     data-slipstream = ${private.slipstream.mjs}
                     data-slipstream-prepend = ${private.slipstreamPrepend.mjs}
                 }

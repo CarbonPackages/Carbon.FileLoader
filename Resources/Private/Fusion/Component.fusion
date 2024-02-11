@@ -23,11 +23,8 @@ prototype(Carbon.FileLoader:Component) < prototype(Neos.Fusion:Component) {
     mjsFolder = 'Modules/'
     cssFolder = 'Styles/'
 
-    /// bool Load the scripts with defer attribute (only fot tags strategy)
-    deferScripts = true
-
-    /// bool Load the scripts with async attribute (only fot tags strategy)
-    asyncScripts = false
+    /// 'defer' | 'async' | null Load the scripts with defer attribute
+    scriptExecution = 'defer'
 
     /// bool Whether to use the cache or not (only fot attributes strategy)
     useCache = true

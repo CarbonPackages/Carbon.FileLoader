@@ -7,6 +7,7 @@ interface initLoaderOptions {
 interface LoadOptions {
     url: string;
     type: 'js' | 'css' | 'mjs';
+    scriptExecution: 'async' | 'defer' | false;
     useCache: boolean;
     debug: boolean;
 }
@@ -46,15 +47,19 @@ function initLoader({ callback = () => {}, rootElement = document, markup = '' }
         const dataset = (element as HTMLElement).dataset;
         const useCache = !getBooleanData(dataset.noCache);
         const debug = getBooleanData(dataset.debug);
+        let scriptExecution = dataset.scriptExecution || false;
+        if (scriptExecution !== 'async' && scriptExecution !== 'defer') {
+            scriptExecution = false;
+        }
 
         if (dataset?.css) {
             styles = [...styles, ...LoaderMap(dataset.css, 'css', useCache, debug)];
         }
         if (dataset?.mjs) {
-            scripts = [...scripts, ...LoaderMap(dataset.mjs, 'mjs', useCache, debug)];
+            scripts = [...scripts, ...LoaderMap(dataset.mjs, 'mjs', useCache, debug, scriptExecution)];
         }
         if (dataset?.js) {
-            scripts = [...scripts, ...LoaderMap(dataset.js, 'js', useCache, debug)];
+            scripts = [...scripts, ...LoaderMap(dataset.js, 'js', useCache, debug, scriptExecution)];
         }
     });
 
@@ -78,11 +83,17 @@ function Loader(items: LoadOptions | LoadOptions[]) {
     return items instanceof Array ? Promise.all(items.map(exec)) : exec(items);
 }
 
-function LoaderMap(items: string, type: 'js' | 'css' | 'mjs', useCache: boolean = true, debug: boolean = false) {
-    return items.split(',').map((url) => ({ url, type, useCache, debug }));
+function LoaderMap(
+    items: string,
+    type: 'js' | 'css' | 'mjs',
+    useCache: boolean = true,
+    debug: boolean = false,
+    scriptExecution: 'async' | 'defer' | false = false,
+) {
+    return items.split(',').map((url) => ({ url, type, useCache, debug, scriptExecution }));
 }
 
-function exec({ url, type, useCache, debug }) {
+function exec({ url, type, useCache, debug, scriptExecution }) {
     if (!url) {
         throw new Error('LOADER: You must provide a url to load');
     }
@@ -106,7 +117,7 @@ function exec({ url, type, useCache, debug }) {
         }
     }
 
-    const element = type === 'css' ? createStyle({ url }) : createScript({ url, type });
+    const element = type === 'css' ? createStyle({ url }) : createScript({ url, type, scriptExecution });
     const pending = appendAndLoad(element);
 
     if (useCache) {
@@ -171,7 +182,7 @@ function createStyle({ url }) {
     return link;
 }
 
-function createScript({ url, type }) {
+function createScript({ url, type, scriptExecution }) {
     if (!url) {
         return;
     }
@@ -180,7 +191,9 @@ function createScript({ url, type }) {
     if (type === 'mjs') {
         script.type = 'module';
     }
-    script.defer = true;
+    if (scriptExecution) {
+        script[scriptExecution] = true;
+    }
     script.dataset.marker = 'true';
     script.src = url;
 
