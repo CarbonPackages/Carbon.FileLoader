@@ -13,10 +13,10 @@ prototype(Carbon.FileLoader:Helper.FileItems) < prototype(Neos.Fusion:Component)
 
     renderer = Neos.Fusion:Case {
         @process.glue = ${props.glue ? Array.join(value, props.glue) : value}
-        // emptyArray {
-        //     condition = ${!props.package || !props.items}
-        //     renderer = ${[]}
-        // }
+        emptyArray {
+            condition = ${Type.isString(props.items) ? !props.items : Type.isArray(props.items) ? !Array.length(props.items) : false}
+            renderer = ${[]}
+        }
         default {
             condition = true
             renderer = Neos.Fusion:Map {
