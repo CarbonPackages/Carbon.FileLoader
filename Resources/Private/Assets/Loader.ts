@@ -33,7 +33,7 @@ function initLoader({ callback = () => {}, rootElement = document, markup = '' }
         rootElement = templateElement.content;
     }
 
-    const elements = [...rootElement.querySelectorAll(`[${dataLoader}]`)];
+    const elements = getElements(rootElement);
 
     // Early check if there are no elements with data-loader
     if (!markup && elements.length === 0) {
@@ -198,6 +198,17 @@ function createScript({ url, type, scriptExecution }) {
     script.src = url;
 
     return script;
+}
+
+function getElements(rootElement) {
+    let elements = [...rootElement.querySelectorAll(`[${dataLoader}]`)];
+    // Get all template elements
+    const templates = [...rootElement.querySelectorAll('template')];
+    // Get all elements inside templates
+    templates.forEach((template) => {
+        elements = [...elements, ...template.content.querySelectorAll(`[${dataLoader}]`)];
+    });
+    return elements;
 }
 
 export { Loader, LoaderMap, initLoader as default, initLoader };

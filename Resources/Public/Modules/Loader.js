@@ -13,7 +13,7 @@ function initLoader({ callback = () => {
     const templateElement = document.createRange().createContextualFragment(`<template>${markup}</template>`).firstElementChild;
     rootElement = templateElement.content;
   }
-  const elements = [...rootElement.querySelectorAll(`[${dataLoader}]`)];
+  const elements = getElements(rootElement);
   if (!markup && elements.length === 0) {
     callback();
     return;
@@ -130,6 +130,14 @@ function createScript({ url, type, scriptExecution }) {
   script.dataset.marker = "true";
   script.src = url;
   return script;
+}
+function getElements(rootElement) {
+  let elements = [...rootElement.querySelectorAll(`[${dataLoader}]`)];
+  const templates = [...rootElement.querySelectorAll("template")];
+  templates.forEach((template) => {
+    elements = [...elements, ...template.content.querySelectorAll(`[${dataLoader}]`)];
+  });
+  return elements;
 }
 export {
   Loader,
