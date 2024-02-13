@@ -36,7 +36,7 @@ function initLoader({ callback = () => {}, rootElement = document, markup = '' }
     const elements = getElements(rootElement);
 
     // Early check if there are no elements with data-loader
-    if (!markup && elements.length === 0) {
+    if (elements.length === 0) {
         callback();
         return;
     }
