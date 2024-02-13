@@ -59,7 +59,7 @@ function exec({ url, type, useCache, debug, scriptExecution }) {
     throw new Error("LOADER: You must provide a url to load");
   }
   const cacheEntry = cache[url];
-  if (cacheEntry) {
+  if (cacheEntry && useCache) {
     if (debug) {
       console.log("LOADER: cache hit", url);
     }
@@ -68,7 +68,7 @@ function exec({ url, type, useCache, debug, scriptExecution }) {
     const element2 = type === "css" ? getStyleByUrl(url) : getScriptByUrl(url);
     if (element2) {
       const promise = Promise.resolve(element2);
-      if (url) {
+      if (useCache) {
         cache[url] = promise;
       }
       return promise;
@@ -96,15 +96,10 @@ function appendAndLoad(element) {
   });
 }
 function getScriptByUrl(url) {
-  return checkElement(url && document.querySelector(`script[src='${url}']`));
+  return document.querySelector(`script[src="${url}"]`);
 }
 function getStyleByUrl(url) {
-  return checkElement(url && document.querySelector(`link[href='${url}']`));
-}
-function checkElement(element) {
-  if (element && element.dataset.marker !== "true") {
-    return element;
-  }
+  return document.querySelector(`link[href="${url}"]`);
 }
 function createStyle({ url }) {
   if (!url) {
@@ -113,7 +108,6 @@ function createStyle({ url }) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = url;
-  link.dataset.marker = "true";
   return link;
 }
 function createScript({ url, type, scriptExecution }) {
@@ -127,7 +121,6 @@ function createScript({ url, type, scriptExecution }) {
   if (scriptExecution) {
     script[scriptExecution] = true;
   }
-  script.dataset.marker = "true";
   script.src = url;
   return script;
 }
