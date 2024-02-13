@@ -13,15 +13,18 @@ prototype(Carbon.FileLoader:Strategy.Attributes) < prototype(Neos.Fusion:Compone
     useCache = true
 
     /// bool Output some debug information in the console
-    debug = false
+    debug = ${Configuration.setting('Carbon.FileLoader.debug')}
 
     /// bool Entry points to turn off the automatic inclusion of files
     neverIncludeJS = false
     neverIncludeCSS = false
     neverIncludeMJS = false
 
-     /// 'defer' | 'async' | null Load the scripts with defer attribute
+     /// 'defer' | 'async' | null Load the scripts with defer or async attribute
     scriptExecution = 'defer'
+
+    /// string Fire event when files are loaded
+    eventOnLoad = null
 
     /// string Folders to load the files from
     jsFolder = 'Scripts/'
@@ -56,6 +59,7 @@ prototype(Carbon.FileLoader:Strategy.Attributes) < prototype(Neos.Fusion:Compone
         renderer = Neos.Fusion:DataStructure {
             @if.set = ${this['data-loader']}
             data-loader = ${!!(props._js || props._css || props._mjs) ? (props.scriptExecution ? props.scriptExecution : true) : null}
+            data-event-on-load = ${props.eventOnLoad}
             data-no-cache = true
             data-no-cache.@if.set = ${!props.useCache}
             data-debug = true

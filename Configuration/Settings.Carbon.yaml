@@ -6,3 +6,5 @@ Carbon:
     strategy: tags
     # Set this to 0, false or null will disable the version hash
     hashLength: 8
+    # Set this to true to get some debug output in the console. Only for attributes strategy
+    debug: false

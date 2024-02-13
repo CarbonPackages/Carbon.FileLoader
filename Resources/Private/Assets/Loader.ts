@@ -1,5 +1,6 @@
 interface initLoaderOptions {
     callback?: Function;
+    callbackMode?: 'always' | 'newJS' | 'newCSS';
     rootElement?: HTMLElement | Document | DocumentFragment | HTMLTemplateElement;
     markup?: string;
 }
@@ -19,7 +20,12 @@ const dataLoader = 'data-loader';
 
 const getBooleanData = (value) => (value === undefined || value === 'false' ? false : true);
 
-function initLoader({ callback = () => {}, rootElement = document, markup = '' }: initLoaderOptions = {}) {
+function initLoader({
+    callback = () => {},
+    callbackMode = 'always',
+    rootElement = document,
+    markup = '',
+}: initLoaderOptions = {}) {
     // If markup is provided, use it to create a new rootElement
     if (markup) {
         // Early chek if markup contains data-loader
@@ -37,44 +43,72 @@ function initLoader({ callback = () => {}, rootElement = document, markup = '' }
 
     // Early check if there are no elements with data-loader
     if (elements.length === 0) {
-        callback();
+        if (callbackMode === 'always') {
+            callback();
+        }
         return;
     }
 
-    let scripts = [];
-    let styles = [];
+    let collectedScripts = [];
+    let collectedStyles = [];
+    let eventsOnLoad = [];
+    let hasOneDebug = false;
     elements.forEach((element) => {
         const dataset = (element as HTMLElement).dataset;
         const useCache = !getBooleanData(dataset.noCache);
         const debug = getBooleanData(dataset.debug);
-        let scriptExecution = dataset.scriptExecution || false;
+        const css = dataset.css;
+        const js = dataset.js;
+        const mjs = dataset.mjs;
+        const eventOnLoad = dataset.eventOnLoad;
+        eventsOnLoad.push(eventOnLoad);
+        let scriptExecution = dataset.loader || false;
         if (scriptExecution !== 'async' && scriptExecution !== 'defer') {
             scriptExecution = false;
         }
+        const styles = css ? LoaderMap(css, 'css', useCache, debug) : false;
+        const modules = mjs ? LoaderMap(mjs, 'mjs', useCache, debug, scriptExecution) : false;
+        const scripts = js ? LoaderMap(js, 'js', useCache, debug, scriptExecution) : false;
 
-        if (dataset?.css) {
-            styles = [...styles, ...LoaderMap(dataset.css, 'css', useCache, debug)];
+        if (styles) {
+            collectedStyles = [...collectedStyles, ...styles];
         }
-        if (dataset?.mjs) {
-            scripts = [...scripts, ...LoaderMap(dataset.mjs, 'mjs', useCache, debug, scriptExecution)];
+        if (modules) {
+            collectedScripts = [...collectedScripts, ...modules];
         }
-        if (dataset?.js) {
-            scripts = [...scripts, ...LoaderMap(dataset.js, 'js', useCache, debug, scriptExecution)];
+        if (scripts) {
+            collectedScripts = [...collectedScripts, ...scripts];
+        }
+
+        if (debug) {
+            hasOneDebug = true;
+            console.log('LOADER: element setting', { styles, modules, scripts, eventOnLoad });
         }
     });
 
     // unique arrays
-    styles = [...new Set(styles)];
-    scripts = [...new Set(scripts)];
+    eventsOnLoad = [...new Set(eventsOnLoad)].filter(Boolean);
+    const styles = uniqueyArrayByUrl(collectedStyles);
+    const scripts = uniqueyArrayByUrl(collectedScripts);
+
+    if (hasOneDebug) {
+        console.log('LOADER: all settings', { styles, scripts, eventsOnLoad });
+    }
 
     // Load styles and scripts
     Loader(styles).then(() => {
         // Run callback if there are no scripts
-        if (!scripts.length) {
+        if ((!scripts.length && callbackMode === 'always') || callbackMode === 'newCSS') {
+            fireEvents(eventsOnLoad);
             callback();
         }
     });
-    Loader(scripts).then(callback);
+    Loader(scripts).then(() => {
+        if (callbackMode === 'always' || callbackMode === 'newJS') {
+            fireEvents(eventsOnLoad);
+            callback();
+        }
+    });
 
     return { styles, scripts };
 }
@@ -200,6 +234,23 @@ function getElements(rootElement) {
         elements = [...elements, ...template.content.querySelectorAll(`[${dataLoader}]`)];
     });
     return elements;
+}
+
+function fireEvents(eventNames) {
+    eventNames.forEach((eventName) => {
+        document.dispatchEvent(new Event(eventName));
+    });
+}
+
+function uniqueyArrayByUrl(arr) {
+    const urls = [];
+    return arr.filter((item) => {
+        if (urls.includes(item.url)) {
+            return false;
+        }
+        urls.push(item.url);
+        return true;
+    });
 }
 
 export { Loader, LoaderMap, initLoader as default, initLoader };

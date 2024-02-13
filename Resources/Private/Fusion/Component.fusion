@@ -23,14 +23,17 @@ prototype(Carbon.FileLoader:Component) < prototype(Neos.Fusion:Component) {
     mjsFolder = 'Modules/'
     cssFolder = 'Styles/'
 
-    /// 'defer' | 'async' | null Load the scripts with defer attribute
+    /// 'defer' | 'async' | null Load the scripts with defer or async attribute
     scriptExecution = 'defer'
 
-    /// bool Whether to use the cache or not (only fot attributes strategy)
+    /// string Fire event when files are loaded (only for attributes strategy)
+    eventOnLoad = null
+
+    /// bool Whether to use the cache or not (only for attributes strategy)
     useCache = true
 
-    /// bool Output some debug information in the console (only fot attributes strategy)
-    debug = false
+    /// bool Output some debug information in the console (only for attributes strategy)
+    debug = ${Configuration.setting('Carbon.FileLoader.debug')}
 
     /// array of bool|string Target for slipstream (only for tags strategy and if Sitegeist.Slipstream is installed)
     slipstream = Neos.Fusion:DataStructure {
