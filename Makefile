@@ -11,7 +11,7 @@ install:
 
 ## Prettier files
 prettier:
-	@pnpm prettier --write --no-error-on-unmatched-pattern '**/*.{ts,php,yaml,md}'
+	@pnpm prettier --write --no-error-on-unmatched-pattern '**/*.{ts,mjs,php,yaml,md}'
 
 ## Build production version
 build:

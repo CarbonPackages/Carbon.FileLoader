@@ -1,20 +1,20 @@
-import esbuild from 'esbuild';
+import esbuild from "esbuild";
 
 const options = {
-    logLevel: 'info',
+    logLevel: "info",
     sourcemap: false,
-    entryPoints: ['Resources/Private/Assets/*.ts'],
-    target: 'es2020',
-    format: 'esm',
+    entryPoints: ["Resources/Private/Assets/*.ts"],
+    target: "es2020",
+    format: "esm",
     bundle: true,
-    outdir: 'Resources/Public/Modules',
+    outdir: "Resources/Public/Modules",
     minify: false,
 };
 
 const minOptions = {
     ...options,
     minify: true,
-    outExtension: { '.js': '.min.js' },
+    outExtension: { ".js": ".min.js" },
 };
 
 async function watch(options) {
@@ -23,5 +23,5 @@ async function watch(options) {
 }
 
 [options, minOptions].forEach((options) => {
-    process.argv.includes('--watch') ? watch(options) : esbuild.build(options);
+    process.argv.includes("--watch") ? watch(options) : esbuild.build(options);
 });
