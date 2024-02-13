@@ -11,23 +11,16 @@ prototype(Carbon.FileLoader:Helper.FileItems) < prototype(Neos.Fusion:Component)
     /// string If set, the array will be converted to a string and split by this delimiter
     glue = null
 
-    renderer = Neos.Fusion:Case {
-        @process.glue = ${props.glue ? Array.join(value, props.glue) : value}
-        emptyArray {
-            condition = ${Type.isString(props.items) ? !props.items : Type.isArray(props.items) ? !Array.length(props.items) : false}
-            renderer = ${[]}
+    renderer = Neos.Fusion:Map {
+        @process {
+            filter = ${Array.filter(value)}
+            glue = ${props.glue ? Array.join(value, props.glue) : value}
         }
-        default {
-            condition = true
-            renderer = Neos.Fusion:Map {
-                @process.filter = ${Array.filter(value)}
-                items = ${Type.isArray(props.items) ? props.items : String.split(props.items, ',')}
-                itemRenderer = Carbon.FileLoader:Helper.File {
-                    package = ${props.package}
-                    folder = ${props.folder}
-                    file = ${item}
-                }
-            }
+        items = ${Carbon.FileLoader.filter(props.items)}
+        itemRenderer = Carbon.FileLoader:Helper.File {
+            package = ${props.package}
+            folder = ${props.folder}
+            file = ${item}
         }
     }
 }

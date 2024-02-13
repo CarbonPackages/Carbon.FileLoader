@@ -3,3 +3,6 @@ Neos:
     fusion:
       autoInclude:
         Carbon.FileLoader: true
+  Fusion:
+    defaultContext:
+      Carbon.FileLoader: 'Carbon\FileLoader\EelHelper\FileLoaderHelper'
