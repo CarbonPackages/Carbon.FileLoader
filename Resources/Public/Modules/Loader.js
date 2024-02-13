@@ -14,7 +14,7 @@ function initLoader({ callback = () => {
     rootElement = templateElement.content;
   }
   const elements = getElements(rootElement);
-  if (!markup && elements.length === 0) {
+  if (elements.length === 0) {
     callback();
     return;
   }
