@@ -77,7 +77,7 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                         rel = ${props.inline ? null : 'stylesheet'}
                         href = ${props.inline ? null : item}
                         data-slipstream = ${props._slipstream.css}
-                        data-slipstream-prepend = ${props._slipstreamPrepend.css}
+                        data-slipstream-prepend = ${props._slipstream.css ? props._slipstreamPrepend.css : null}
                     }
                     content = ${props.inline ? item : null}
                 }
@@ -91,7 +91,7 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                         defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
                         asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
                         data-slipstream = ${props._slipstream.js}
-                        data-slipstream-prepend = ${props._slipstreamPrepend.js}
+                        data-slipstream-prepend = ${props._slipstream.js ? props._slipstreamPrepend.js : null}
                     }
                     content = ${props.inline ? item : null}
                 }
@@ -107,6 +107,7 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                         asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
                         data-slipstream = ${props._slipstream.mjs}
                         data-slipstream-prepend = ${props._slipstreamPrepend.mjs}
+                        data-slipstream-prepend = ${props._slipstream.mjs ? props._slipstreamPrepend.mjs : null}
                     }
                     content = ${props.inline ? item : null}
                 }
