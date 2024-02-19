@@ -8,8 +8,11 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 
 class FileImplementation extends AbstractFusionObject
 {
-    #[Flow\Inject]
-    protected ResourceManager $resourceManager;
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
 
     public function getHashLength(): ?string
     {
