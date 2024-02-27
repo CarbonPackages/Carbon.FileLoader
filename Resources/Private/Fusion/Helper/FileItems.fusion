@@ -11,6 +11,9 @@ prototype(Carbon.FileLoader:Helper.FileItems) < prototype(Neos.Fusion:Component)
     /// string If set, the array will be converted to a string and split by this delimiter
     glue = null
 
+    /// bool Inline script/style or not
+    inline = false
+
     renderer = Neos.Fusion:Map {
         @process {
             filter = ${Array.filter(value)}
@@ -20,6 +23,7 @@ prototype(Carbon.FileLoader:Helper.FileItems) < prototype(Neos.Fusion:Component)
         itemRenderer = Carbon.FileLoader:Helper.File {
             package = ${props.package}
             folder = ${props.folder}
+            inline = ${props.inline}
             file = ${item}
         }
     }

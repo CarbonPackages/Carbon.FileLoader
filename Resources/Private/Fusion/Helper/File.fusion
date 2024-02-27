@@ -10,5 +10,8 @@ prototype(Carbon.FileLoader:Helper.File) {
     /// string The file name. If the file contains '//', it will be used as path and the package and folder are ignored
     file = null
 
+    /// bool Inline script/style or not
+    inline = false
+
     hashLength = ${Configuration.setting('Carbon.FileLoader.hashLength')}
 }
