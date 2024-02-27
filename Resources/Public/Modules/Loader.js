@@ -36,15 +36,16 @@ function initLoader({
     const css = dataset.css;
     const js = dataset.js;
     const mjs = dataset.mjs;
+    const split = dataset.split || ",";
     const eventOnLoad = dataset.eventOnLoad;
     eventsOnLoad.push(eventOnLoad);
     let scriptExecution = dataset.loader || false;
     if (scriptExecution !== "async" && scriptExecution !== "defer") {
       scriptExecution = false;
     }
-    const styles2 = css ? LoaderMap(css, "css", useCache, debug) : false;
-    const modules = mjs ? LoaderMap(mjs, "mjs", useCache, debug, scriptExecution) : false;
-    const scripts2 = js ? LoaderMap(js, "js", useCache, debug, scriptExecution) : false;
+    const styles2 = css ? LoaderMap(split, css, "css", useCache, debug) : false;
+    const modules = mjs ? LoaderMap(split, mjs, "mjs", useCache, debug, scriptExecution) : false;
+    const scripts2 = js ? LoaderMap(split, js, "js", useCache, debug, scriptExecution) : false;
     if (styles2) {
       collectedStyles = [...collectedStyles, ...styles2];
     }
@@ -82,8 +83,8 @@ function initLoader({
 function Loader(items) {
   return items instanceof Array ? Promise.all(items.map(exec)) : exec(items);
 }
-function LoaderMap(items, type, useCache = true, debug = false, scriptExecution = false) {
-  return items.split(",").map((url) => ({ url, type, useCache, debug, scriptExecution }));
+function LoaderMap(split, items, type, useCache = true, debug = false, scriptExecution = false) {
+  return items.split(split).map((url) => ({ url, type, useCache, debug, scriptExecution }));
 }
 function exec({ url, type, useCache, debug, scriptExecution }) {
   if (!url) {

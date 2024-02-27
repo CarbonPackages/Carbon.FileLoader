@@ -60,15 +60,16 @@ function initLoader({
         const css = dataset.css;
         const js = dataset.js;
         const mjs = dataset.mjs;
+        const split = dataset.split || ',';
         const eventOnLoad = dataset.eventOnLoad;
         eventsOnLoad.push(eventOnLoad);
         let scriptExecution = dataset.loader || false;
         if (scriptExecution !== 'async' && scriptExecution !== 'defer') {
             scriptExecution = false;
         }
-        const styles = css ? LoaderMap(css, 'css', useCache, debug) : false;
-        const modules = mjs ? LoaderMap(mjs, 'mjs', useCache, debug, scriptExecution) : false;
-        const scripts = js ? LoaderMap(js, 'js', useCache, debug, scriptExecution) : false;
+        const styles = css ? LoaderMap(split, css, 'css', useCache, debug) : false;
+        const modules = mjs ? LoaderMap(split, mjs, 'mjs', useCache, debug, scriptExecution) : false;
+        const scripts = js ? LoaderMap(split, js, 'js', useCache, debug, scriptExecution) : false;
 
         if (styles) {
             collectedStyles = [...collectedStyles, ...styles];
@@ -118,13 +119,14 @@ function Loader(items: LoadOptions | LoadOptions[]) {
 }
 
 function LoaderMap(
+    split: string,
     items: string,
     type: 'js' | 'css' | 'mjs',
     useCache: boolean = true,
     debug: boolean = false,
     scriptExecution: 'async' | 'defer' | false = false,
 ) {
-    return items.split(',').map((url) => ({ url, type, useCache, debug, scriptExecution }));
+    return items.split(split).map((url) => ({ url, type, useCache, debug, scriptExecution }));
 }
 
 function exec({ url, type, useCache, debug, scriptExecution }) {
