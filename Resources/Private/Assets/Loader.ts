@@ -1,4 +1,4 @@
-import { defaultEvent } from './FireEvent';
+import { defaultEvent } from './EventDispatcher';
 
 interface initLoaderOptions {
     callback?: Function;

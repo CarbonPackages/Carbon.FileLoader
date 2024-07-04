@@ -1,5 +1,5 @@
-// Resources/Private/Assets/FireEvent.ts
-function fireEvent(eventName, options, element = document) {
+// Resources/Private/Assets/EventDispatcher.ts
+function eventDispatcher(eventName, options, element = document) {
   if (options?.detail === void 0) {
     defaultEvent(eventName, options, element);
     return;
@@ -14,7 +14,7 @@ function customEvent(eventName, detail, { bubbles = true, cancelable = true, com
 }
 export {
   customEvent,
-  fireEvent as default,
+  eventDispatcher as default,
   defaultEvent,
-  fireEvent
+  eventDispatcher
 };

@@ -1,4 +1,4 @@
-function fireEvent(eventName, options, element = document) {
+function eventDispatcher(eventName, options, element = document) {
     if (options?.detail === undefined) {
         defaultEvent(eventName, options, element);
         return;
@@ -19,4 +19,4 @@ function customEvent(
     element.dispatchEvent(new CustomEvent(eventName, { detail, bubbles, cancelable, composed }));
 }
 
-export { fireEvent as default, fireEvent, defaultEvent, customEvent };
+export { eventDispatcher as default, eventDispatcher, defaultEvent, customEvent };

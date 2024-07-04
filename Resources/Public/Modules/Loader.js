@@ -1,4 +1,4 @@
-// Resources/Private/Assets/FireEvent.ts
+// Resources/Private/Assets/EventDispatcher.ts
 function defaultEvent(eventName, { bubbles = true, cancelable = true, composed = true } = {}, element = document) {
   element.dispatchEvent(new Event(eventName, { bubbles, cancelable, composed }));
 }
