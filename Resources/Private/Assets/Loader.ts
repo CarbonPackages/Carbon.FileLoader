@@ -240,7 +240,7 @@ function getElements(rootElement) {
 
 function fireEvents(eventNames) {
     eventNames.forEach((eventName) => {
-        document.dispatchEvent(new Event(eventName));
+        document.dispatchEvent(new Event(eventName, { bubbles: true, cancelable: true, composed: true }));
     });
 }
 
