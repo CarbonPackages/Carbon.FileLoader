@@ -1,4 +1,6 @@
-function eventDispatcher(eventName, options, element = document) {
+type Element = HTMLElement | Document | DocumentFragment | HTMLTemplateElement | Window;
+
+function eventDispatcher(eventName: string, options: any, element: Element = document) {
     if (options?.detail === undefined) {
         defaultEvent(eventName, options, element);
         return;
@@ -6,15 +8,19 @@ function eventDispatcher(eventName, options, element = document) {
     customEvent(eventName, options.detail, options, element);
 }
 
-function defaultEvent(eventName, { bubbles = true, cancelable = true, composed = true } = {}, element = document) {
+function defaultEvent(
+    eventName: string,
+    { bubbles = true, cancelable = true, composed = true } = {},
+    element: Element = document,
+) {
     element.dispatchEvent(new Event(eventName, { bubbles, cancelable, composed }));
 }
 
 function customEvent(
-    eventName,
-    detail,
+    eventName: string,
+    detail: any,
     { bubbles = true, cancelable = true, composed = true } = {},
-    element = document,
+    element: Element = document,
 ) {
     element.dispatchEvent(new CustomEvent(eventName, { detail, bubbles, cancelable, composed }));
 }
