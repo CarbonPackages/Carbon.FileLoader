@@ -1,3 +1,5 @@
+import { defaultEvent } from './FireEvent';
+
 interface initLoaderOptions {
     callback?: Function;
     callbackMode?: 'always' | 'newJS' | 'newCSS';
@@ -240,7 +242,7 @@ function getElements(rootElement) {
 
 function fireEvents(eventNames) {
     eventNames.forEach((eventName) => {
-        document.dispatchEvent(new Event(eventName, { bubbles: true, cancelable: true, composed: true }));
+        defaultEvent(eventName);
     });
 }
 

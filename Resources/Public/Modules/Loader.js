@@ -1,3 +1,8 @@
+// Resources/Private/Assets/FireEvent.ts
+function defaultEvent(eventName, { bubbles = true, cancelable = true, composed = true } = {}, element = document) {
+  element.dispatchEvent(new Event(eventName, { bubbles, cancelable, composed }));
+}
+
 // Resources/Private/Assets/Loader.ts
 var head = document.head;
 var cache = {};
@@ -166,7 +171,7 @@ function getElements(rootElement) {
 }
 function fireEvents(eventNames) {
   eventNames.forEach((eventName) => {
-    document.dispatchEvent(new Event(eventName, { bubbles: true, cancelable: true, composed: true }));
+    defaultEvent(eventName);
   });
 }
 function uniqueyArrayByUrl(arr) {
