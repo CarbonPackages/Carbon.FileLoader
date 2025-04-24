@@ -73,7 +73,7 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                 items = ${props._css || []}
                 itemRenderer = Neos.Fusion:Tag {
                     tagName = ${props.inline ? 'style' : 'link'}
-                    attributes = Neos.Fusion:Attributes {
+                    attributes = Neos.Fusion:DataStructure {
                         rel = ${props.inline ? null : 'stylesheet'}
                         href = ${props.inline ? null : item}
                         data-slipstream = ${props._slipstream.css}
@@ -86,7 +86,7 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                 items = ${props._js || []}
                 itemRenderer = Neos.Fusion:Tag {
                     tagName = 'script'
-                    attributes = Neos.Fusion:Attributes {
+                    attributes = Neos.Fusion:DataStructure {
                         src = ${props.inline ? null : item}
                         defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
                         asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
@@ -100,7 +100,7 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
                 items = ${props._mjs || []}
                 itemRenderer = Neos.Fusion:Tag {
                     tagName = 'script'
-                    attributes = Neos.Fusion:Attributes {
+                    attributes = Neos.Fusion:DataStructure {
                         src = ${props.inline ? null : item}
                         type = 'module'
                         defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
