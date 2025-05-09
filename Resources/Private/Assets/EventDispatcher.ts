@@ -1,6 +1,6 @@
 type Element = HTMLElement | Document | DocumentFragment | HTMLTemplateElement | Window;
 
-function eventDispatcher(eventName: string, options: any, element: Element = document) {
+function eventDispatcher(eventName: string, options: any = {}, element: Element = document) {
     if (options?.detail === undefined) {
         defaultEvent(eventName, options, element);
         return;
