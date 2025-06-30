@@ -2,24 +2,21 @@
 
 namespace Carbon\FileLoader\FusionObjects;
 
+use Carbon\FileLoader\Service\FileService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Flow\ResourceManagement\ResourceManager;
 
 class FileImplementation extends AbstractFusionObject
 {
-    /**
-     * @Flow\Inject
-     * @var ResourceManager
-     */
-    protected $resourceManager;
+    #[Flow\Inject]
+    protected FileService $fileService;
 
-    public function getHashLength(): ?string
+    public function getHashLength(): ?int
     {
         return $this->fusionValue('hashLength');
     }
 
-    public function getInline(): ?string
+    public function getInline(): ?bool
     {
         return $this->fusionValue('inline');
     }
@@ -46,46 +43,12 @@ class FileImplementation extends AbstractFusionObject
      */
     public function evaluate(): ?string
     {
-        $uri = $this->getFile();
-
-        if (!$uri) {
-            return null;
-        }
-
-        $hashLength = (int) $this->getHashLength();
-
-        if (!str_contains($uri, '//')) {
-            $package = $this->getPackage();
-            if (!$package) {
-                return null;
-            }
-            $folder = $this->getFolder();
-            $uri = sprintf('resource://%s/Public/%s%s', $package, $folder, $uri);
-        }
-
-        if (str_starts_with($uri, 'resource://')) {
-            $uri = $this->resourceManager->getPublicPackageResourceUriByPath($uri);
-        }
-
-        if ($this->getInline()) {
-            return file_get_contents($uri) ?: '';
-        }
-
-        if ($hashLength <= 0) {
-            return $uri;
-        }
-
-        $hashValue = '';
-        try {
-            $hashValue = sha1_file($uri);
-            if (strlen($hashValue) > $hashLength) {
-                $hashValue = substr($hashValue, 0, $hashLength);
-            }
-            $hashPrefix = str_contains($uri, '?') ? '&' : '?';
-            $hashValue = $hashPrefix . 'h=' . $hashValue;
-        } catch (\Throwable $th) {
-        }
-
-        return $uri . $hashValue;
+        return $this->fileService->uri(
+            $this->getFile(),
+            $this->getInline(),
+            $this->getPackage(),
+            $this->getFolder(),
+            $this->getHashLength()
+        );
     }
 }

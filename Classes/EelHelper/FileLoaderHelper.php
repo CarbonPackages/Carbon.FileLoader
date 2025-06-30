@@ -2,10 +2,16 @@
 
 namespace Carbon\FileLoader\EelHelper;
 
+use Carbon\FileLoader\Service\FileService;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
 
 class FileLoaderHelper implements ProtectedContextAwareInterface
 {
+
+    #[Flow\Inject]
+    protected FileService $fileService;
+
     /**
      * Filter items and convert them to an array
      *
@@ -31,6 +37,27 @@ class FileLoaderHelper implements ProtectedContextAwareInterface
         }
 
         return $value;
+    }
+
+    /**
+     * Return uri of the file
+     *
+     * @param string $uri
+     * @param boolean $inline
+     * @param string|null $package
+     * @param string|null $folder
+     * @param integer|null $hashLength
+     * @return string|null
+     */
+    public function uri(string $uri, bool $inline = false, ?string $package = null, ?string $folder = null, ?int $hashLength = null): ?string
+    {
+        return $this->fileService->uri(
+            $uri,
+            $inline,
+            $package,
+            $folder,
+            $hashLength
+        );
     }
 
     /**
