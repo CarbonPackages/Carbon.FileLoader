@@ -21,7 +21,7 @@ class FileLoaderHelper implements ProtectedContextAwareInterface
             $value = explode(',', $value);
         }
         if (!is_array($value)) {
-            return null;
+            return [];
         }
         $value = array_map('trim', $value);
         $value = array_filter($value);
