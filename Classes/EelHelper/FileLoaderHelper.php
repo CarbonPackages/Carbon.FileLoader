@@ -39,6 +39,38 @@ class FileLoaderHelper implements ProtectedContextAwareInterface
         return $value;
     }
 
+     /**
+     * Return multiple uris of the files, separated by commas
+     *
+     * @param array<string>|string $value
+     * @return string|null
+     */
+    public function uris(array|string $array = []): ?string
+    {
+        if (is_string($array)) {
+            $array = [trim($array)];
+        }
+        if (!is_array($array) || !count($array)) {
+            return null;
+        }
+        $result = [];
+        foreach ($array as $item) {
+            if (!is_string($item)) {
+                continue;
+            }
+            $item = trim($item);
+            if (!$item) {
+                continue;
+            }
+            $result[] = $this->uri($item);
+        }
+        $array = array_filter(array_unique($result));
+        if (!count($array)) {
+            return null;
+        }
+        return implode(',', $array);
+    }
+
     /**
      * Return uri of the file
      *
