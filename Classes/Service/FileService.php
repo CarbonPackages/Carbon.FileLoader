@@ -39,12 +39,13 @@ class FileService
             $uri = sprintf('resource://%s/Public/%s%s', $package, $folder, $uri);
         }
 
-        if (str_starts_with($uri, 'resource://')) {
-            $uri = $this->resourceManager->getPublicPackageResourceUriByPath($uri);
-        }
-
         if ($inline) {
             return file_get_contents($uri) ?: '';
+        }
+
+        $flowResourcePathOrUri = $uri;
+        if (str_starts_with($flowResourcePathOrUri, 'resource://')) {
+            $uri = $this->resourceManager->getPublicPackageResourceUriByPath($flowResourcePathOrUri);
         }
 
         if ($hashLength <= 0) {
@@ -53,7 +54,7 @@ class FileService
 
         $hashValue = '';
         try {
-            $hashValue = sha1_file($uri);
+            $hashValue = sha1_file($flowResourcePathOrUri);
             if (strlen($hashValue) > $hashLength) {
                 $hashValue = substr($hashValue, 0, $hashLength);
             }
