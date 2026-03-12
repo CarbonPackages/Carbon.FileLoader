@@ -8,7 +8,6 @@ use Neos\Flow\Annotations as Flow;
 
 class FileLoaderHelper implements ProtectedContextAwareInterface
 {
-
     #[Flow\Inject]
     protected FileService $fileService;
 
@@ -39,7 +38,7 @@ class FileLoaderHelper implements ProtectedContextAwareInterface
         return $value;
     }
 
-     /**
+    /**
      * Return multiple uris of the files, separated by commas
      *
      * @param array<string>|string $value
@@ -81,15 +80,14 @@ class FileLoaderHelper implements ProtectedContextAwareInterface
      * @param integer|null $hashLength
      * @return string|null
      */
-    public function uri(string $uri, bool $inline = false, ?string $package = null, ?string $folder = null, ?int $hashLength = null): ?string
-    {
-        return $this->fileService->uri(
-            $uri,
-            $inline,
-            $package,
-            $folder,
-            $hashLength
-        );
+    public function uri(
+        string $uri,
+        bool $inline = false,
+        ?string $package = null,
+        ?string $folder = null,
+        ?int $hashLength = null,
+    ): ?string {
+        return $this->fileService->uri($uri, $inline, $package, $folder, $hashLength);
     }
 
     /**

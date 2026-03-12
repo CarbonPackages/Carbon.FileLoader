@@ -48,7 +48,7 @@ class FileImplementation extends AbstractFusionObject
             $this->getInline(),
             $this->getPackage(),
             $this->getFolder(),
-            $this->getHashLength()
+            $this->getHashLength(),
         );
     }
 }

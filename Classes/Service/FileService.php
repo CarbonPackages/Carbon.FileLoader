@@ -23,8 +23,13 @@ class FileService
      * @param integer|null $hashLength
      * @return string|null
      */
-    public function uri(string $uri, bool $inline = false, ?string $package = null, ?string $folder = null, ?int $hashLength = null): ?string
-    {
+    public function uri(
+        string $uri,
+        bool $inline = false,
+        ?string $package = null,
+        ?string $folder = null,
+        ?int $hashLength = null,
+    ): ?string {
         if (!$uri) {
             return null;
         }
