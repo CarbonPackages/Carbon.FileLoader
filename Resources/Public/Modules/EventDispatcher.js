@@ -1,5 +1,5 @@
 // Resources/Private/Assets/EventDispatcher.ts
-function eventDispatcher(eventName, options, element = document) {
+function eventDispatcher(eventName, options = {}, element = document) {
   if (options?.detail === void 0) {
     defaultEvent(eventName, options, element);
     return;
