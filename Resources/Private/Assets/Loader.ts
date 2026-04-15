@@ -271,7 +271,7 @@ function uniqueyArrayByUrl(arr: { url: string }[]) {
     });
 }
 
-export function decodeBase64Url(url: string | undefined | null, encodeUrls: boolean): string | null {
+function decodeBase64Url(url: string | undefined | null, encodeUrls: boolean): string | null {
     if (!url) {
         return null;
     }
