@@ -38,9 +38,10 @@ function initLoader({
     const dataset = element.dataset;
     const useCache = !getBooleanData(dataset.noCache);
     const debug = getBooleanData(dataset.debug);
-    const css = dataset.css;
-    const js = dataset.js;
-    const mjs = dataset.mjs;
+    const encodeUrls = getBooleanData(dataset.encoded);
+    const css = decodeBase64Url(dataset.css, encodeUrls);
+    const js = decodeBase64Url(dataset.js, encodeUrls);
+    const mjs = decodeBase64Url(dataset.mjs, encodeUrls);
     const split = dataset.split || ",";
     const eventOnLoad = dataset.eventOnLoad;
     eventsOnLoad.push(eventOnLoad);
@@ -147,7 +148,11 @@ function createStyle({ url }) {
   link.href = url;
   return link;
 }
-function createScript({ url, type, scriptExecution }) {
+function createScript({
+  url,
+  type,
+  scriptExecution
+}) {
   if (!url) {
     return;
   }
@@ -183,6 +188,18 @@ function uniqueyArrayByUrl(arr) {
     urls.push(item.url);
     return true;
   });
+}
+function decodeBase64Url(url, encodeUrls) {
+  if (!url) {
+    return null;
+  }
+  if (!encodeUrls) {
+    return url;
+  }
+  const length = url.length;
+  const m = length % 4;
+  url = url.replace(/-/g, "+").replace(/_/g, "/").padEnd(length + (m === 0 ? 0 : 4 - m), "=");
+  return window.atob(url);
 }
 export {
   Loader,
