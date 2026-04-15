@@ -39,78 +39,76 @@ prototype(Carbon.FileLoader:Strategy.Tags) < prototype(Neos.Fusion:Component) {
         mjs = false
     }
 
-    // Solve this with @private as soon the minimum version is Neos 8.3
-    renderer = Neos.Fusion:Component {
-        @apply.props = ${props}
-        _slipstreamIsInstalled = ${!!Configuration.setting('Neos.Neos.fusion.autoInclude')['Sitegeist.Slipstream']}
-        _slipstream = ${props.slipstream && this._slipstreamIsInstalled ? props.slipstream : []}
-        _slipstreamPrepend = ${props.slipstreamPrepend && this._slipstreamIsInstalled ? props.slipstreamPrepend : []}
+    @private {
+        slipstreamIsInstalled = ${!!Configuration.setting('Neos.Neos.fusion.autoInclude')['Sitegeist.Slipstream']}
+        slipstream = ${props.slipstream && private.slipstreamIsInstalled ? props.slipstream : []}
+        slipstreamPrepend = ${props.slipstreamPrepend && private.slipstreamIsInstalled ? props.slipstreamPrepend : []}
 
-        _css = Carbon.FileLoader:Helper.FileItems {
+        css = Carbon.FileLoader:Helper.FileItems {
             @if.set = ${!props.neverIncludeCSS}
             items = ${props.css}
             package = ${props.package}
             folder = ${props.cssFolder}
             inline = ${props.inline}
         }
-        _js = Carbon.FileLoader:Helper.FileItems {
+        js = Carbon.FileLoader:Helper.FileItems {
             @if.set = ${!props.neverIncludeJS}
             items = ${props.js}
             package = ${props.package}
             folder = ${props.jsFolder}
             inline = ${props.inline}
         }
-        _mjs = Carbon.FileLoader:Helper.FileItems {
+        mjs = Carbon.FileLoader:Helper.FileItems {
             @if.set = ${!props.neverIncludeMJS}
             items = ${props.mjs}
             package = ${props.package}
             folder = ${props.mjsFolder}
             inline = ${props.inline}
         }
+    }
 
-        renderer = Neos.Fusion:Join {
-            css = Neos.Fusion:Loop {
-                items = ${props._css || []}
-                itemRenderer = Neos.Fusion:Tag {
-                    tagName = ${props.inline ? 'style' : 'link'}
-                    attributes = Neos.Fusion:DataStructure {
-                        rel = ${props.inline ? null : 'stylesheet'}
-                        href = ${props.inline ? null : item}
-                        data-slipstream = ${props._slipstream.css}
-                        data-slipstream-prepend = ${props._slipstream.css ? props._slipstreamPrepend.css : null}
-                    }
-                    content = ${props.inline ? item : null}
+    renderer = Neos.Fusion:Join {
+        css = Neos.Fusion:Loop {
+            items = ${private.css || []}
+            itemRenderer = Neos.Fusion:Tag {
+                tagName = ${props.inline ? 'style' : 'link'}
+                attributes = Neos.Fusion:DataStructure {
+                    rel = ${props.inline ? null : 'stylesheet'}
+                    href = ${props.inline ? null : item}
+                    data-slipstream = ${private.slipstream.css}
+                    data-slipstream-prepend = ${private.slipstream.css ? private.slipstreamPrepend.css : null}
                 }
+                content = ${props.inline ? item : null}
             }
-            js = Neos.Fusion:Loop {
-                items = ${props._js || []}
-                itemRenderer = Neos.Fusion:Tag {
-                    tagName = 'script'
-                    attributes = Neos.Fusion:DataStructure {
-                        src = ${props.inline ? null : item}
-                        defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
-                        asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
-                        data-slipstream = ${props._slipstream.js}
-                        data-slipstream-prepend = ${props._slipstream.js ? props._slipstreamPrepend.js : null}
-                    }
-                    content = ${props.inline ? item : null}
+        }
+        js = Neos.Fusion:Loop {
+            items = ${private.js || []}
+            itemRenderer = Neos.Fusion:Tag {
+                tagName = 'script'
+                attributes = Neos.Fusion:DataStructure {
+                    src = ${props.inline ? null : item}
+                    defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
+                    asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
+                    data-slipstream = ${private.slipstream.js}
+                    data-slipstream-prepend = ${private.slipstream.js ? private.slipstreamPrepend.js : null}
                 }
+                content = ${props.inline ? item : null}
             }
-            mjs = Neos.Fusion:Loop {
-                items = ${props._mjs || []}
-                itemRenderer = Neos.Fusion:Tag {
-                    tagName = 'script'
-                    attributes = Neos.Fusion:DataStructure {
-                        src = ${props.inline ? null : item}
-                        type = 'module'
-                        defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
-                        asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
-                        data-slipstream = ${props._slipstream.mjs}
-                        data-slipstream-prepend = ${props._slipstreamPrepend.mjs}
-                        data-slipstream-prepend = ${props._slipstream.mjs ? props._slipstreamPrepend.mjs : null}
-                    }
-                    content = ${props.inline ? item : null}
+        }
+        mjs = Neos.Fusion:Loop {
+            items = ${private.mjs || []}
+            itemRenderer = Neos.Fusion:Tag {
+                tagName = 'script'
+                attributes = Neos.Fusion:DataStructure {
+                    src = ${props.inline ? null : item}
+                    type = 'module'
+                    defer = ${props.inline ? null : !!(props.scriptExecution == 'defer')}
+                    asyc = ${props.inline ? null : !!(props.scriptExecution == 'asyc')}
+                    data-slipstream = ${private.slipstream.mjs}
+                    data-slipstream-prepend = ${private.slipstreamPrepend.mjs}
+                    data-slipstream-prepend = ${private.slipstream.mjs ? private.slipstreamPrepend.mjs : null}
                 }
+                content = ${props.inline ? item : null}
             }
         }
     }

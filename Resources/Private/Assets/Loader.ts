@@ -20,7 +20,7 @@ const cache = {};
 
 const dataLoader = 'data-loader';
 
-const getBooleanData = (value) => (value === undefined || value === 'false' ? false : true);
+const getBooleanData = (value: any) => (value === undefined || value === 'false' ? false : true);
 
 function initLoader({
     callback = () => {},
@@ -51,17 +51,18 @@ function initLoader({
         return;
     }
 
-    let collectedScripts = [];
-    let collectedStyles = [];
-    let eventsOnLoad = [];
+    let collectedScripts: LoadOptions[] = [];
+    let collectedStyles: LoadOptions[] = [];
+    let eventsOnLoad: (string | undefined)[] = [];
     let hasOneDebug = false;
     elements.forEach((element) => {
         const dataset = (element as HTMLElement).dataset;
         const useCache = !getBooleanData(dataset.noCache);
         const debug = getBooleanData(dataset.debug);
-        const css = dataset.css;
-        const js = dataset.js;
-        const mjs = dataset.mjs;
+        const encodeUrls = getBooleanData(dataset.encoded);
+        const css = decodeBase64Url(dataset.css, encodeUrls);
+        const js = decodeBase64Url(dataset.js, encodeUrls);
+        const mjs = decodeBase64Url(dataset.mjs, encodeUrls);
         const split = dataset.split || ',';
         const eventOnLoad = dataset.eventOnLoad;
         eventsOnLoad.push(eventOnLoad);
@@ -194,15 +195,15 @@ function appendAndLoad(element) {
     });
 }
 
-function getScriptByUrl(url) {
+function getScriptByUrl(url: string) {
     return document.querySelector(`script[src="${url}"]`);
 }
 
-function getStyleByUrl(url) {
+function getStyleByUrl(url: string) {
     return document.querySelector(`link[href="${url}"]`);
 }
 
-function createStyle({ url }) {
+function createStyle({ url }: { url: string }) {
     if (!url) {
         return;
     }
@@ -213,7 +214,15 @@ function createStyle({ url }) {
     return link;
 }
 
-function createScript({ url, type, scriptExecution }) {
+function createScript({
+    url,
+    type,
+    scriptExecution,
+}: {
+    url: string;
+    type: 'js' | 'mjs';
+    scriptExecution: 'async' | 'defer' | false;
+}) {
     if (!url) {
         return;
     }
@@ -229,25 +238,30 @@ function createScript({ url, type, scriptExecution }) {
     return script;
 }
 
-function getElements(rootElement) {
-    let elements = [...rootElement.querySelectorAll(`[${dataLoader}]`)];
+interface ElementQueryResult {
+    elements: Element[];
+    templates: HTMLTemplateElement[];
+}
+
+function getElements(rootElement: HTMLElement | Document | DocumentFragment | HTMLTemplateElement): Element[] {
+    let elements: Element[] = [...rootElement.querySelectorAll(`[${dataLoader}]`)];
     // Get all template elements
-    const templates = [...rootElement.querySelectorAll('template')];
+    const templates: HTMLTemplateElement[] = [...rootElement.querySelectorAll('template')];
     // Get all elements inside templates
-    templates.forEach((template) => {
+    templates.forEach((template: HTMLTemplateElement) => {
         elements = [...elements, ...template.content.querySelectorAll(`[${dataLoader}]`)];
     });
     return elements;
 }
 
-function fireEvents(eventNames) {
+function fireEvents(eventNames: string[]) {
     eventNames.forEach((eventName) => {
         defaultEvent(eventName);
     });
 }
 
-function uniqueyArrayByUrl(arr) {
-    const urls = [];
+function uniqueyArrayByUrl(arr: { url: string }[]) {
+    const urls: string[] = [];
     return arr.filter((item) => {
         if (urls.includes(item.url)) {
             return false;
@@ -255,6 +269,22 @@ function uniqueyArrayByUrl(arr) {
         urls.push(item.url);
         return true;
     });
+}
+
+export function decodeBase64Url(url: string | undefined | null, encodeUrls: boolean): string | null {
+    if (!url) {
+        return null;
+    }
+    if (!encodeUrls) {
+        return url;
+    }
+    const length = url.length;
+    const m = length % 4;
+    url = url
+        .replace(/-/g, '+')
+        .replace(/_/g, '/')
+        .padEnd(length + (m === 0 ? 0 : 4 - m), '=');
+    return window.atob(url);
 }
 
 export { Loader, LoaderMap, initLoader as default, initLoader };

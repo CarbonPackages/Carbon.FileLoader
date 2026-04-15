@@ -5,6 +5,9 @@ namespace Carbon\FileLoader\EelHelper;
 use Carbon\FileLoader\Service\FileService;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use function base64_encode;
+use function rtrim;
+use function strtr;
 
 class FileLoaderHelper implements ProtectedContextAwareInterface
 {
@@ -88,6 +91,19 @@ class FileLoaderHelper implements ProtectedContextAwareInterface
         ?int $hashLength = null,
     ): ?string {
         return $this->fileService->uri($uri, $inline, $package, $folder, $hashLength);
+    }
+
+    /**
+     * Encode string to Base64 URL format
+     *
+     * @param string $string The string to encode
+     * @return string The string encoded
+     */
+    public function encodeUrl(string $string): string
+    {
+        $encoded = strtr(base64_encode($string), '+/', '-_');
+
+        return rtrim($encoded, '=');
     }
 
     /**
