@@ -8,3 +8,4 @@ Carbon:
     hashLength: 8
     # Set this to true to get some debug output in the console. Only for attributes strategy
     debug: false
+    removeLocalhost: true
