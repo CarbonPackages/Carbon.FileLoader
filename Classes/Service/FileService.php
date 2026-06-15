@@ -71,7 +71,10 @@ class FileService
         } catch (\Throwable $th) {
         }
 
-        if ($this->removeLocalhost && (str_starts_with($uri, 'http://localhost/') || str_starts_with($uri, 'https://localhost/'))) {
+        if (
+            $this->removeLocalhost &&
+            (str_starts_with($uri, 'http://localhost/') || str_starts_with($uri, 'https://localhost/'))
+        ) {
             $uri = str_replace(['http://localhost/', 'https://localhost/'], '/', $uri);
         }
 
